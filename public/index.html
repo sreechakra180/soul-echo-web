@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo Soul - AI Character Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .character-card:hover .character-image {
+            transform: scale(1.05);
+            transition: transform 0.3s ease;
+        }
+        .chat-bubble-user {
+            border-radius: 18px 18px 0 18px;
+        }
+        .chat-bubble-ai {
+            border-radius: 18px 18px 18px 0;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #6e8efb 0%, #a777e3 100%);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Vanta Birds container */
+        #vanta-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* Make content more visible on animated background */
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Add glassmorphism effect to cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+    <!-- Vanta Birds Background -->
+    <div id="vanta-bg"></div>
+    
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+        <!-- Header -->
+        <header class="glass-card text-white shadow-lg">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-robot text-3xl"></i>
+                    <h1 class="text-2xl font-bold">Echo Soul</h1>
+                </div>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#" class="hover:text-gray-200 font-medium">Characters</a>
+                    <a href="#" class="hover:text-gray-200 font-medium">Create</a>
+                    <a href="#" class="hover:text-gray-200 font-medium">Chats</a>
+                    <a href="#" class="hover:text-gray-200 font-medium">Community</a>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <button class="hidden md:block bg-white text-purple-600 px-4 py-2 rounded-full font-medium hover:bg-gray-100 transition">
+                        Sign In
+                    </button>
+                    <button class="md:hidden text-2xl" id="mobile-menu-button">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div class="md:hidden hidden bg-white text-gray-800 py-2 px-4 shadow-lg" id="mobile-menu">
+                <a href="#" class="block py-2 hover:text-purple-600">Characters</a>
+                <a href="#" class="block py-2 hover:text-purple-600">Create</a>
+                <a href="#" class="block py-2 hover:text-purple-600">Chats</a>
+                <a href="#" class="block py-2 hover:text-purple-600">Community</a>
+                <button class="w-full bg-purple-600 text-white px-4 py-2 rounded-full font-medium mt-2 hover:bg-purple-700 transition">
+                    Sign In
+                </button>
+            </div>
+        </header>
+        
+        <!-- Hero Section -->
+        <section class="py-16">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">Chat with 100+ AI Characters</h2>
+                <p class="text-xl text-white text-opacity-90 mb-8 max-w-2xl mx-auto">Discover unique personalities, from historical figures to fictional heroes, all powered by advanced AI.</p>
+                <div class="flex flex-col md:flex-row justify-center gap-4">
+                    <button class="glass-card text-white px-6 py-3 rounded-full font-bold hover:bg-white hover:bg-opacity-20 transition">
+                        Explore Characters
+                    </button>
+                    <button class="glass-card text-white px-6 py-3 rounded-full font-bold hover:bg-white hover:bg-opacity-20 transition">
+                        Create Your Own
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Character Categories -->
+        <section class="py-12">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-white mb-8">Browse by Category</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="glass-card p-6 text-center hover:shadow-lg transition cursor-pointer">
+                        <i class="fas fa-user-ninja text-4xl text-purple-300 mb-4"></i>
+                        <h3 class="font-bold text-lg text-white">Villains</h3>
+                        <p class="text-gray-300">Dark and mysterious</p>
+                    </div>
+                    <div class="glass-card p-6 text-center hover:shadow-lg transition cursor-pointer">
+                        <i class="fas fa-shield-alt text-4xl text-blue-300 mb-4"></i>
+                        <h3 class="font-bold text-lg text-white">Heroes</h3>
+                        <p class="text-gray-300">Brave and noble</p>
+                    </div>
+                    <div class="glass-card p-6 text-center hover:shadow-lg transition cursor-pointer">
+                        <i class="fas fa-landmark text-4xl text-green-300 mb-4"></i>
+                        <h3 class="font-bold text-lg text-white">Historical</h3>
+                        <p class="text-gray-300">Figures from history</p>
+                    </div>
+                    <div class="glass-card p-6 text-center hover:shadow-lg transition cursor-pointer">
+                        <i class="fas fa-book text-4xl text-yellow-300 mb-4"></i>
+                        <h3 class="font-bold text-lg text-white">Fictional</h3>
+                        <p class="text-gray-300">From books and movies</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- All Characters Accordion -->
+        <section class="py-12">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-white mb-8">Browse 100+ AI Characters</h2>
+                <div id="character-accordion" class="space-y-4 max-w-4xl mx-auto">
+                    <p class="text-white text-center">Loading characters...</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Chat Interface Preview -->
+        <section class="py-12">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-white mb-8">Experience Rich Conversations</h2>
+                
+                <div class="max-w-4xl mx-auto glass-card rounded-xl overflow-hidden shadow-lg">
+                    <!-- Chat Header -->
+                    <div class="bg-purple-600 bg-opacity-30 text-white p-4 flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-3">
+                            <i class="fas fa-robot text-purple-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold">Neon</h3>
+                            <p class="text-xs opacity-80">Online</p>
+                        </div>
+                        <div class="ml-auto flex space-x-2">
+                            <button class="p-2 hover:bg-purple-700 rounded-full">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Messages -->
+                    <div class="h-96 overflow-y-auto p-4 space-y-4 bg-black bg-opacity-20" id="chat-messages">
+                        <!-- AI Message -->
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                                <i class="fas fa-robot text-purple-600 text-sm"></i>
+                            </div>
+                            <div class="max-w-xs md:max-w-md bg-purple-100 bg-opacity-20 text-gray-200 p-3 chat-bubble-ai">
+                                <p>Greetings, human. I am Neon, an artificial intelligence from the year 2142. How may I assist you today?</p>
+                            </div>
+                        </div>
+                        
+                        <!-- User Message -->
+                        <div class="flex items-start justify-end">
+                            <div class="max-w-xs md:max-w-md bg-purple-600 bg-opacity-30 text-white p-3 chat-bubble-user">
+                                <p>Hi Neon! What's the future like in 2142?</p>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center ml-3">
+                                <i class="fas fa-user text-white text-sm"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- AI Message -->
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                                <i class="fas fa-robot text-purple-600 text-sm"></i>
+                            </div>
+                            <div class="max-w-xs md:max-w-md bg-purple-100 bg-opacity-20 text-gray-200 p-3 chat-bubble-ai">
+                                <p>The future is... complicated. We've solved many problems like disease and hunger, but new challenges have emerged with advanced AI and space colonization. Would you like to hear about a specific aspect?</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Input -->
+                    <div class="border-t p-4 bg-black bg-opacity-20">
+                        <div class="flex items-center">
+                            <input type="text" placeholder="Type your message..." class="flex-1 border rounded-full py-2 px-4 bg-white bg-opacity-10 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <button class="ml-2 bg-purple-600 bg-opacity-30 text-white p-2 rounded-full hover:bg-opacity-50 transition">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Features -->
+        <section class="py-12">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-white mb-12">Why Choose Echo Soul?</h2>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="glass-card p-6 rounded-xl shadow-md hover:shadow-lg transition">
+                        <div class="text-purple-300 text-4xl mb-4">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="font-bold text-xl mb-2 text-white">Advanced AI</h3>
+                        <p class="text-gray-300">Powered by cutting-edge Groq models for natural, engaging conversations that adapt to each character's personality.</p>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-xl shadow-md hover:shadow-lg transition">
+                        <div class="text-purple-300 text-4xl mb-4">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="font-bold text-xl mb-2 text-white">Diverse Characters</h3>
+                        <p class="text-gray-300">From historical figures to original creations, our library offers unique personalities for every interest.</p>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-xl shadow-md hover:shadow-lg transition">
+                        <div class="text-purple-300 text-4xl mb-4">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+                        <h3 class="font-bold text-xl mb-2 text-white">Customization</h3>
+                        <p class="text-gray-300">Create your own characters with custom personalities, backstories, and conversation styles.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Testimonials -->
+        <section class="py-12">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-white mb-8">What Our Users Say</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <div class="glass-card p-6 rounded-xl">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
+                                <i class="fas fa-user text-purple-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white">Sarah K.</h4>
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-300">"I've been using Echo Soul to practice my historical research skills by interviewing characters from different time periods. It's incredibly realistic!"</p>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-xl">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
+                                <i class="fas fa-user text-purple-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white">Michael T.</h4>
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-300">"As a writer, Echo Soul has been invaluable for character development. I can test out dialogue and personalities before putting them in my stories."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- CTA -->
+        <section class="py-16">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-white">Ready to Start Your AI Journey?</h2>
+                <p class="text-xl mb-8 max-w-2xl mx-auto text-white text-opacity-90">Join thousands of users exploring endless conversations with our AI characters.</p>
+                <button class="glass-card text-white px-8 py-3 rounded-full font-bold hover:bg-white hover:bg-opacity-20 transition">
+                    Sign Up - It's Free
+                </button>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="glass-card text-white py-12 mt-16">
+            <div class="container mx-auto px-4">
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div>
+                        <div class="flex items-center space-x-2 mb-4">
+                            <i class="fas fa-robot text-2xl"></i>
+                            <h3 class="text-xl font-bold">Echo Soul</h3>
+                        </div>
+                        <p class="text-gray-300 mb-4">The premier platform for AI character interactions.</p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-gray-300 hover:text-white">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="text-gray-300 hover:text-white">
+                                <i class="fab fa-discord"></i>
+                            </a>
+                            <a href="#" class="text-gray-300 hover:text-white">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-300 hover:text-white">Characters</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-white">Categories</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-white">Trending</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-white">New Releases</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-lg mb-4 text-white">Company</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-300 hover:text-white">About Us</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-white">Careers</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-white">Blog</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-white">Contact</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-lg mb-4 text-white">Legal</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-300 hover:text-white">Terms</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-white">Privacy</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-white">Cookies</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-white">Guidelines</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                    <p>© 2023 Echo Soul. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Vanta Birds Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+        
+        // Initialize Vanta Birds effect
+        VANTA.BIRDS({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            backgroundColor: 0x7192f,
+            color1: 0xff0000,
+            color2: 0xd1ff,
+            birdSize: 1,
+            wingSpan: 30,
+            speedLimit: 5,
+            separation: 20,
+            alignment: 20,
+            cohesion: 20,
+            quantity: 5
+        });
+        
+        // Load characters and create accordion
+        fetch('/api/characters')
+            .then(response => response.json())
+            .then(characters => {
+                const container = document.getElementById('character-accordion');
+                container.innerHTML = ''; // Clear loading message
+                
+                for (const [category, list] of Object.entries(characters)) {
+                    const id = category.replace(/[^a-z0-9]/gi,'');
+                    const details = document.createElement('details');
+                    details.className='glass-card rounded-xl shadow-md p-4';
+                    details.innerHTML = `
+                        <summary class="font-bold text-lg cursor-pointer text-white">${category} (${list.length})</summary>
+                        <div class="p-4 grid gap-2">
+                            ${list.map(c=>`
+                                <button data-char="${c}" class="chat-btn text-left p-2 rounded hover:bg-white hover:bg-opacity-10 transition text-white">
+                                    ${c}
+                                </button>`).join('')}
+                        </div>`;
+                    container.appendChild(details);
+                }
+                
+                // Open chat when character is selected
+                document.addEventListener('click', e=>{
+                    if(!e.target.classList.contains('chat-btn')) return;
+                    const name = e.target.dataset.char;
+                    fetch('/api/chat', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({character:name})})
+                        .then(r=>r.json())
+                        .then(data=>window.location.href=`/chat/${data.chatId}`);
+                });
+            })
+            .catch(error => console.error('Error loading characters:', error));
+            
+        // Simulate chat message sending
+        document.querySelector('.fa-paper-plane').parentElement.addEventListener('click', function() {
+            const input = document.querySelector('input[type="text"]');
+            if (input.value.trim() !== '') {
+                // Add user message
+                const chatMessages = document.getElementById('chat-messages');
+                
+                const userMessageDiv = document.createElement('div');
+                userMessageDiv.className = 'flex items-start justify-end fade-in';
+                userMessageDiv.innerHTML = `
+                    <div class="max-w-xs md:max-w-md bg-purple-600 bg-opacity-30 text-white p-3 chat-bubble-user">
+                        <p>${input.value}</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center ml-3">
+                        <i class="fas fa-user text-white text-sm"></i>
+                    </div>
+                `;
+                chatMessages.appendChild(userMessageDiv);
+                
+                // Clear input
+                input.value = '';
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Simulate AI response after a delay
+                setTimeout(() => {
+                    const responses = [
+                        "Fascinating question! Let me analyze that...",
+                        "Ah, that reminds me of an interesting story from my past.",
+                        "I've been programmed with extensive knowledge on that topic.",
+                        "From my perspective in the future, that's quite an insightful question.",
+                        "My databases indicate several possible answers to your query."
+                    ];
+                    
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    
+                    const aiMessageDiv = document.createElement('div');
+                    aiMessageDiv.className = 'flex items-start fade-in';
+                    aiMessageDiv.innerHTML = `
+                        <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                            <i class="fas fa-robot text-purple-600 text-sm"></i>
+                        </div>
+                        <div class="max-w-xs md:max-w-md bg-purple-100 bg-opacity-20 text-gray-200 p-3 chat-bubble-ai">
+                            <p>${randomResponse}</p>
+                        </div>
+                    `;
+                    chatMessages.appendChild(aiMessageDiv);
+                    
+                    // Scroll to bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

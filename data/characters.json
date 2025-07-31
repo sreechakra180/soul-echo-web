@@ -1,0 +1,8 @@
+{
+  "Historical": ["Cleopatra", "Leonardo da Vinci", "Napoleon"],
+  "Fictional": ["Sherlock Holmes", "Harry Potter", "Batman"],
+  "Heroes": ["Superman", "Wonder Woman", "Spider-Man"],
+  "Villains": ["Joker", "Thanos", "Darth Vader"],
+  "Global Icons": ["Michael Jackson", "Elon Musk", "Steve Jobs", "Albert Einstein", "Taylor Swift", "Lionel Messi", "Keanu Reeves", "Freddie Mercury", "Emma Watson", "Jungkook"],
+  "Indian Icons": ["APJ Abdul Kalam", "Rakesh Master", "Rajinikanth", "MS Dhoni", "Sushant Singh Rajput", "Virat Kohli", "Allu Arjun", "Pawan Kalyan", "Nani", "Sai Pallavi"]
+}

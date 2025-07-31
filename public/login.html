@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Echo Soul</title>
+  <link rel="stylesheet" href="https://cdn.tailwindcss.com/3.4.5" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #000;
+    }
+    
+    /* Magical Background */
+    .magic-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
+      z-index: -2;
+    }
+    
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 3s infinite;
+    }
+    
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+    
+    /* Floating Orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.6;
+      animation: float 20s infinite ease-in-out;
+    }
+    
+    .orb1 {
+      width: 300px;
+      height: 300px;
+      background: #8A2BE2;
+      top: -150px;
+      left: -150px;
+      animation-delay: 0s;
+    }
+    
+    .orb2 {
+      width: 200px;
+      height: 200px;
+      background: #00BFFF;
+      bottom: -100px;
+      right: -100px;
+      animation-delay: 5s;
+    }
+    
+    .orb3 {
+      width: 250px;
+      height: 250px;
+      background: #FF1493;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: 10s;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(30px, -30px) rotate(120deg); }
+      66% { transform: translate(-20px, 20px) rotate(240deg); }
+    }
+    
+    /* Login Container */
+    .login-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4);
+      padding: 40px;
+      z-index: 10;
+      animation: slideIn 0.5s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+    }
+    
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .login-title {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0 0 10px;
+    background: linear-gradient(135deg, #8A2BE2, #00BFFF);
+    -webkit-background-clip: text;
+    background-clip: text; /* Add standard property */
+    -webkit-text-fill-color: transparent;
+    color: #8A2BE2; /* Fallback color */
+    }
+    
+    .login-subtitle {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 16px;
+      margin: 0;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    
+    .form-input:focus {
+      border-color: #8A2BE2;
+    }
+    
+    .form-input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .login-button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #8A2BE2, #00BFFF);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    
+    .login-button:hover {
+      transform: scale(1.02);
+    }
+    
+    .login-options {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    
+    .login-link {
+      color: #8A2BE2;
+      text-decoration: none;
+    }
+    
+    .login-link:hover {
+      text-decoration: underline;
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 25px 0;
+    }
+    
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .divider-text {
+      padding: 0 15px;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 14px;
+    }
+    
+    .social-login {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .social-button {
+      flex: 1;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+    
+    .social-button:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .signup-prompt {
+      text-align: center;
+      margin-top: 25px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+    }
+    
+    .error-message {
+      background: rgba(255, 0, 0, 0.2);
+      border: 1px solid rgba(255, 0, 0, 0.5);
+      color: #ff6b6b;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Magical Background -->
+  <div class="magic-bg"></div>
+  <div class="stars" id="stars"></div>
+  
+  <!-- Floating Orbs -->
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  
+  <!-- Login Container -->
+  <div class="login-container">
+    <div class="login-header">
+      <h1 class="login-title">Welcome Back</h1>
+      <p class="login-subtitle">Sign in to continue to Echo Soul</p>
+    </div>
+    
+    <div class="error-message" id="error-message"></div>
+    
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input 
+          id="email" 
+          type="email" 
+          class="form-input" 
+          placeholder="Enter your email" 
+          required
+        />
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input 
+          id="password" 
+          type="password" 
+          class="form-input" 
+          placeholder="Enter your password" 
+          required
+        />
+      </div>
+      
+      <button type="submit" class="login-button">Sign In</button>
+      
+      <div class="login-options">
+        <a href="#" class="login-link">Forgot password?</a>
+        <a href="#" class="login-link">Create account</a>
+      </div>
+    </form>
+    
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-text">OR</div>
+      <div class="divider-line"></div>
+    </div>
+    
+    <div class="social-login">
+      <a href="#" class="social-button">
+        <i class="fab fa-google"></i> Google
+      </a>
+      <a href="#" class="social-button">
+        <i class="fab fa-github"></i> GitHub
+      </a>
+    </div>
+    
+    <div class="signup-prompt">
+      Don't have an account? <a href="#" class="login-link">Sign up</a>
+    </div>
+  </div>
+
+  <script>
+    // Generate stars
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 100; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.width = Math.random() * 3 + 'px';
+      star.style.height = star.style.width;
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 3 + 's';
+      starsContainer.appendChild(star);
+    }
+    
+    // Login form handling
+    const loginForm = document.getElementById('login-form');
+    const errorMessage = document.getElementById('error-message');
+    
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      try {
+        // For demo purposes, we'll accept any email/password combination
+        // In a real app, you would validate against a database
+        
+        // Create a user object
+        const user = {
+          id: 'user-' + Date.now(),
+          name: email.split('@')[0], // Use part of email as name
+          email: email,
+          avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(email.split('@')[0])}&background=8A2BE2&color=fff&format=png`,
+          createdAt: new Date().toISOString(),
+          lastLogin: new Date().toISOString()
+        };
+        
+        // Store user in localStorage
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        // Redirect to profile page
+        window.location.href = '/profile';
+      } catch (error) {
+        console.error('Login error:', error);
+        errorMessage.textContent = 'Invalid email or password. Please try again.';
+        errorMessage.style.display = 'block';
+      }
+    });
+    
+    // Check if user is already logged in
+    window.addEventListener('DOMContentLoaded', () => {
+      const user = localStorage.getItem('user');
+      if (user) {
+        // If user is already logged in, redirect to profile
+        window.location.href = '/profile';
+      }
+    });
+  </script>
+</body>
+</html>

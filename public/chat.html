@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chat - Echo Soul</title>
+  <link rel="stylesheet" href="https://cdn.tailwindcss.com/3.4.5" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #000;
+    }
+    
+    /* Magical Background */
+    .magic-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
+      z-index: -2;
+    }
+    
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 3s infinite;
+    }
+    
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+    
+    /* Floating Orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.6;
+      animation: float 20s infinite ease-in-out;
+    }
+    
+    .orb1 {
+      width: 300px;
+      height: 300px;
+      background: #8A2BE2;
+      top: -150px;
+      left: -150px;
+      animation-delay: 0s;
+    }
+    
+    .orb2 {
+      width: 200px;
+      height: 200px;
+      background: #00BFFF;
+      bottom: -100px;
+      right: -100px;
+      animation-delay: 5s;
+    }
+    
+    .orb3 {
+      width: 250px;
+      height: 250px;
+      background: #FF1493;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: 10s;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(30px, -30px) rotate(120deg); }
+      66% { transform: translate(-20px, 20px) rotate(240deg); }
+    }
+    
+    /* Floating Chat Container */
+    .chat-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 500px;
+      height: 80vh;
+      max-height: 700px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 10;
+      animation: slideIn 0.5s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+    }
+    
+    /* Chat Header */
+    .chat-header {
+      background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(0, 191, 255, 0.3));
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .character-info {
+      display: flex;
+      align-items: center;
+    }
+    
+    .character-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+      position: relative;
+    }
+    
+    .avatar-glow {
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #8A2BE2, #00BFFF);
+      z-index: -1;
+      animation: rotate 3s linear infinite;
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .character-details {
+      margin-left: 15px;
+    }
+    
+    .character-name {
+      color: white;
+      font-weight: 600;
+      font-size: 18px;
+      margin: 0;
+    }
+    
+    .character-status {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #4ade80;
+      border-radius: 50%;
+      margin-right: 5px;
+      box-shadow: 0 0 10px #4ade80;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 10px #4ade80; }
+      50% { box-shadow: 0 0 20px #4ade80; }
+    }
+    
+    /* Chat Messages */
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .chat-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .chat-messages::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+    }
+    
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+    }
+    
+    /* Message Bubbles */
+    .message {
+      display: flex;
+      animation: messageIn 0.3s ease-out;
+    }
+    
+    @keyframes messageIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .message.user {
+      justify-content: flex-end;
+    }
+    
+    .message-bubble {
+      max-width: 70%;
+      padding: 12px 18px;
+      border-radius: 18px;
+      position: relative;
+    }
+    
+    .message.user .message-bubble {
+      background: linear-gradient(135deg, #8A2BE2, #00BFFF);
+      color: white;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+    }
+    
+    .message.ai .message-bubble {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border-bottom-left-radius: 4px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      margin: 0 10px;
+    }
+    
+    /* Typing Indicator */
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      width: fit-content;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: white;
+      margin: 0 2px;
+      animation: typing 1.4s infinite;
+    }
+    
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    
+    @keyframes typing {
+      0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.7;
+      }
+      30% {
+        transform: translateY(-10px);
+        opacity: 1;
+      }
+    }
+    
+    /* Chat Input */
+    .chat-input {
+      padding: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .input-container {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 5px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .input-field {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      font-size: 14px;
+      outline: none;
+    }
+    
+    .input-field::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .input-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8A2BE2, #00BFFF);
+      border: none;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .input-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+    }
+    
+    /* Magic Particles */
+    .particle {
+      position: fixed;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 1;
+    }
+    
+    @keyframes particleFloat {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(1.5);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Magical Background -->
+  <div class="magic-bg"></div>
+  <div class="stars" id="stars"></div>
+  
+  <!-- Floating Orbs -->
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  
+  <!-- Floating Chat Container -->
+  <div class="chat-container">
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <div class="character-info">
+        <div class="character-avatar">
+          <div class="avatar-glow"></div>
+          <img id="char-avatar" src="https://ui-avatars.com/api/?name=AI&background=8A2BE2&color=fff&format=png" alt="Character">
+        </div>
+        <div class="character-details">
+          <h3 id="char-name" class="character-name">Loading...</h3>
+          <p class="character-status">
+            <span class="status-dot"></span>
+            Online
+          </p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="text-white text-opacity-70 hover:text-white mx-2">
+          <i class="fas fa-phone"></i>
+        </button>
+        <button class="text-white text-opacity-70 hover:text-white mx-2">
+          <i class="fas fa-video"></i>
+        </button>
+        <button class="text-white text-opacity-70 hover:text-white mx-2">
+          <i class="fas fa-ellipsis-v"></i>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Chat Messages -->
+    <div class="chat-messages" id="messages">
+      <div class="text-center text-white text-opacity-50 py-10">
+        <i class="fas fa-robot text-4xl mb-4"></i>
+        <p>Loading chat...</p>
+      </div>
+    </div>
+    
+    <!-- Chat Input -->
+    <div class="chat-input">
+      <form id="message-form" class="input-container">
+        <input 
+          id="msg" 
+          type="text" 
+          class="input-field" 
+          placeholder="Type your message..." 
+          autocomplete="off"
+        />
+        <button type="submit" class="input-button">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+  <script>
+    // Generate stars
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 100; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.width = Math.random() * 3 + 'px';
+      star.style.height = star.style.width;
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 3 + 's';
+      starsContainer.appendChild(star);
+    }
+    
+    // Create magic particles on click
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('.chat-container')) return;
+      
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.innerHTML = '✨';
+      particle.style.left = e.clientX + 'px';
+      particle.style.top = e.clientY + 'px';
+      particle.style.animation = 'particleFloat 1s ease-out forwards';
+      document.body.appendChild(particle);
+      
+      setTimeout(() => particle.remove(), 1000);
+    });
+    
+    // Chat functionality
+    // FIXED: Better URL parsing to extract chat ID
+    const pathParts = window.location.pathname.split('/');
+    const chatId = pathParts[pathParts.length - 1];
+    
+    // Debug: Log the extracted chat ID
+    console.log('Current URL path:', window.location.pathname);
+    console.log('Path parts:', pathParts);
+    console.log('Extracted chat ID:', chatId);
+    
+    // Check if chat ID is valid
+    if (!chatId || chatId === 'chat.html' || chatId === 'undefined') {
+      console.error('Invalid chat ID:', chatId);
+      // Redirect to home page if chat ID is invalid
+      window.location.href = '/';
+    }
+    
+    const msgForm = document.getElementById('message-form');
+    const msgInput = document.getElementById('msg');
+    const messagesEl = document.getElementById('messages');
+    const charNameEl = document.getElementById('char-name');
+    const charAvatarEl = document.getElementById('char-avatar');
+    
+    // Generate avatar based on character name
+    function generateAvatar(name) {
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8A2BE2&color=fff&format=png`;
+    }
+    
+    // Load character name and chat history
+    async function loadChat() {
+      try {
+        console.log('Loading chat with ID:', chatId);
+        const convRes = await fetch(`/api/chat/${chatId}`);
+        console.log('Response status:', convRes.status);
+        
+        if (!convRes.ok) {
+          if (convRes.status === 404) {
+            console.error('Chat not found');
+            window.location.href = '/';
+            return;
+          }
+          throw new Error(`HTTP error! status: ${convRes.status}`);
+        }
+        
+        const conversation = await convRes.json();
+        console.log('Chat data loaded:', conversation);
+        
+        // Set character name and avatar
+        charNameEl.textContent = conversation.character || 'AI Character';
+        charAvatarEl.src = generateAvatar(conversation.character || 'AI');
+        
+        // Clear loading message
+        messagesEl.innerHTML = '';
+        
+        // Add welcome message if no history
+        if (!conversation.messages || conversation.messages.length === 0) {
+          appendMessage('ai', `Hello! I'm ${conversation.character}. How can I help you today?`);
+        } else {
+          // Load existing messages
+          conversation.messages.forEach(msg => {
+            appendMessage(msg.role, msg.content);
+          });
+        }
+      } catch (err) {
+        console.error('Error loading chat:', err);
+        charNameEl.textContent = 'AI Character';
+        messagesEl.innerHTML = '<div class="text-center text-red-400">Error loading chat</div>';
+      }
+    }
+    
+    function appendMessage(role, text) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${role}`;
+      
+      if (role === 'ai') {
+        messageDiv.innerHTML = `
+          <img src="${charAvatarEl.src}" alt="${charNameEl.textContent}" class="message-avatar">
+          <div class="message-bubble">${text}</div>
+        `;
+      } else {
+        messageDiv.innerHTML = `
+          <div class="message-bubble">${text}</div>
+          <img src="https://ui-avatars.com/api/?name=User&background=00BFFF&color=fff&format=png" alt="User" class="message-avatar">
+        `;
+      }
+      
+      messagesEl.appendChild(messageDiv);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+    
+    function showTypingIndicator() {
+      const typingDiv = document.createElement('div');
+      typingDiv.id = 'typing-indicator';
+      typingDiv.className = 'message ai';
+      typingDiv.innerHTML = `
+        <img src="${charAvatarEl.src}" alt="${charNameEl.textContent}" class="message-avatar">
+        <div class="typing-indicator">
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+        </div>
+      `;
+      messagesEl.appendChild(typingDiv);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+    
+    function removeTypingIndicator() {
+      const indicator = document.getElementById('typing-indicator');
+      if (indicator) {
+        indicator.remove();
+      }
+    }
+    
+    msgForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const text = msgInput.value.trim();
+      if (!text) return;
+      
+      // Add user message immediately
+      appendMessage('user', text);
+      msgInput.value = '';
+      
+      // Show typing indicator
+      showTypingIndicator();
+      
+      try {
+        console.log('Sending message to chat:', chatId);
+        const res = await fetch(`/chat/${chatId}/message`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+        
+        console.log('Message response status:', res.status);
+        
+        if (!res.ok) throw new Error('Failed to send message');
+        
+        // Remove typing indicator
+        removeTypingIndicator();
+        
+        const { reply } = await res.json();
+        console.log('AI reply:', reply);
+        appendMessage('ai', reply);
+      } catch (err) {
+        console.error('Error sending message:', err);
+        removeTypingIndicator();
+        appendMessage('ai', 'Sorry, I encountered an error. Please try again.');
+      }
+    });
+    
+    // Initialize chat
+    loadChat();
+  </script>
+</body>
+</html>

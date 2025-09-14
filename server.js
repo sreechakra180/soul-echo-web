@@ -312,7 +312,7 @@ app.post('/chat/:chatId/message', async (req, res) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'llama3-8b-8192',
+        model: 'llama-3.1-8b-instant',
         messages: groqMessages,
         max_tokens: 40,
         temperature: 0.5,
@@ -390,4 +390,5 @@ app.get('/admin', (req, res) => {
 
 // ---------- Start ----------
 // ---------- Start ----------
+
 app.listen(PORT, () => console.log(`Server running http://localhost:${PORT}`));
